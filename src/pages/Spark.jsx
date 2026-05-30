@@ -1,58 +1,21 @@
-import { useState, useEffect } from 'react'
-import { generateCurriculum } from '../utils/gemini'
-import SparkResult from '../components/SparkResult'
-import PremiumGate from '../components/PremiumGate'
-
-const SPARK_KEY = 'remnara_spark_count'
-const FREE_LIMIT = 5
+import { useState } from 'react'
 
 export default function Spark() {
-  const [input, setInput] = useState('')
-  const [result, setResult] = useState(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [sparkCount, setSparkCount] = useState(0)
+  const [email, setEmail] = useState('')
+  const [submitted, setSubmitted] = useState(false)
 
-  useEffect(() => {
-    const stored = parseInt(localStorage.getItem(SPARK_KEY) || '0', 10)
-    setSparkCount(stored)
-  }, [])
-
-  const isAtLimit = sparkCount >= FREE_LIMIT
-
-  async function handleSubmit(e) {
+  function handleSubmit(e) {
     e.preventDefault()
-    if (!input.trim() || isLoading || isAtLimit) return
-
-    setIsLoading(true)
-    setError(null)
-    setResult(null)
-
-    const newCount = sparkCount + 1
-    localStorage.setItem(SPARK_KEY, String(newCount))
-    setSparkCount(newCount)
-
-    try {
-      const curriculum = await generateCurriculum(input.trim())
-      setResult(curriculum)
-    } catch (err) {
-      setError(
-        err.message || 'Something went wrong. Please check your API key and try again.'
-      )
-    } finally {
-      setIsLoading(false)
-    }
+    if (!email.trim()) return
+    // TODO: Connect to email backend (Supabase or similar) when ready
+    setSubmitted(true)
+    setEmail('')
   }
 
   return (
-    <div
-      className="min-h-screen pb-24"
-      style={{ backgroundColor: '#FAFAF7' }}
-    >
-      <div
-        className="px-5 pt-12"
-        style={{ maxWidth: '680px', margin: '0 auto' }}
-      >
+    <div className="min-h-screen pb-24" style={{ backgroundColor: '#FAFAF7' }}>
+      <div className="px-5 pt-12" style={{ maxWidth: '680px', margin: '0 auto' }}>
+
         {/* Page header */}
         <div className="mb-8">
           <p
@@ -90,7 +53,7 @@ export default function Spark() {
               margin: 0,
             }}
           >
-            Paste anything. Get your curriculum.
+            Something powerful is coming.
           </p>
           <div
             className="mt-5"
@@ -103,168 +66,106 @@ export default function Spark() {
           />
         </div>
 
-        {/* Usage counter */}
-        {!isAtLimit && (
-          <div
-            className="flex items-center gap-2 mb-6 p-3 rounded-lg"
+        {/* Main content card */}
+        <div
+          className="rounded-xl p-7 mb-6 text-center"
+          style={{
+            backgroundColor: '#F0EDE6',
+            border: '1px solid #E2DDD5',
+          }}
+        >
+          <div style={{ fontSize: '48px', marginBottom: '20px', lineHeight: 1 }}>⚡</div>
+          <h2
             style={{
+              fontFamily: '"Playfair Display", serif',
+              fontSize: '28px',
+              fontWeight: 700,
+              color: '#1A1A1A',
+              margin: '0 0 16px 0',
+              letterSpacing: '-0.01em',
+            }}
+          >
+            Coming Soon
+          </h2>
+          <p
+            style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '16px',
+              lineHeight: '1.7',
+              color: '#4A4A4A',
+              margin: 0,
+            }}
+          >
+            Paste anything that caught your attention — a place name, a caption,
+            a line you overheard — and Remnara will build you a cultural
+            curriculum around it.
+          </p>
+          <p
+            style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '16px',
+              lineHeight: '1.7',
+              color: '#4A4A4A',
+              margin: '16px 0 0 0',
+            }}
+          >
+            The Spark is currently in development.
+            <br />
+            Check back soon.
+          </p>
+        </div>
+
+        {/* Waitlist section */}
+        <form onSubmit={handleSubmit}>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Your email address"
+            className="w-full rounded-lg p-4 mb-3 focus:outline-none"
+            style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '16px',
+              color: '#1A1A1A',
               backgroundColor: '#F0EDE6',
-              border: '1px solid #E2DDD5',
+              border: '1.5px solid #E2DDD5',
             }}
-          >
-            <div className="flex gap-1">
-              {Array.from({ length: FREE_LIMIT }).map((_, i) => (
-                <div
-                  key={i}
-                  className="w-3 h-3 rounded-full"
-                  style={{
-                    backgroundColor: i < sparkCount ? '#C1392B' : '#E2DDD5',
-                  }}
-                />
-              ))}
-            </div>
-            <p
-              style={{
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '13px',
-                color: '#1A1A1A',
-                opacity: 0.6,
-              }}
-            >
-              {sparkCount} of {FREE_LIMIT} free sparks used
-            </p>
-          </div>
-        )}
-
-        {/* Form — show if not at limit */}
-        {!isAtLimit ? (
-          <form onSubmit={handleSubmit} className="mb-6">
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="A place name, a quote, a caption you saw... anything cultural."
-              rows={5}
-              className="w-full resize-none rounded-lg p-4 focus:outline-none transition-shadow"
-              style={{
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '16px',
-                lineHeight: '1.65',
-                color: '#1A1A1A',
-                backgroundColor: '#F0EDE6',
-                border: '1.5px solid #E2DDD5',
-                boxShadow: 'none',
-              }}
-              onFocus={(e) => {
-                e.target.style.border = '1.5px solid #1B4D3E'
-              }}
-              onBlur={(e) => {
-                e.target.style.border = '1.5px solid #E2DDD5'
-              }}
-            />
-
-            <button
-              type="submit"
-              disabled={!input.trim() || isLoading}
-              className="w-full mt-3 py-4 rounded-lg font-semibold transition-opacity"
-              style={{
-                fontFamily: '"Playfair Display", serif',
-                fontSize: '18px',
-                fontWeight: 600,
-                backgroundColor: '#1B4D3E',
-                color: 'white',
-                border: 'none',
-                cursor: !input.trim() || isLoading ? 'not-allowed' : 'pointer',
-                opacity: !input.trim() || isLoading ? 0.5 : 1,
-                letterSpacing: '0.01em',
-              }}
-            >
-              {isLoading ? 'Generating...' : 'Generate My Curriculum'}
-            </button>
-          </form>
-        ) : (
-          <div className="mb-6">
-            {/* Show input as read-only when at limit */}
-            <div
-              className="w-full rounded-lg p-4 mb-3"
-              style={{
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '16px',
-                lineHeight: '1.65',
-                color: '#1A1A1A',
-                backgroundColor: '#F0EDE6',
-                border: '1.5px solid #E2DDD5',
-                opacity: 0.5,
-              }}
-            >
-              <p style={{ opacity: 0.5, fontStyle: 'italic' }}>
-                A place name, a quote, a caption you saw... anything cultural.
-              </p>
-            </div>
-            <button
-              disabled
-              className="w-full py-4 rounded-lg"
-              style={{
-                fontFamily: '"Playfair Display", serif',
-                fontSize: '18px',
-                fontWeight: 600,
-                backgroundColor: '#1B4D3E',
-                color: 'white',
-                border: 'none',
-                cursor: 'not-allowed',
-                opacity: 0.35,
-              }}
-            >
-              Generate My Curriculum
-            </button>
-          </div>
-        )}
-
-        {/* Error message */}
-        {error && (
-          <div
-            className="mb-4 p-4 rounded-lg"
+            onFocus={(e) => { e.target.style.border = '1.5px solid #1B4D3E' }}
+            onBlur={(e) => { e.target.style.border = '1.5px solid #E2DDD5' }}
+          />
+          <button
+            type="submit"
+            disabled={!email.trim()}
+            className="w-full py-4 rounded-lg"
             style={{
-              backgroundColor: '#fef2f2',
-              border: '1px solid #fecaca',
+              fontFamily: '"Playfair Display", serif',
+              fontSize: '18px',
+              fontWeight: 600,
+              backgroundColor: '#1B4D3E',
+              color: 'white',
+              border: 'none',
+              cursor: !email.trim() ? 'not-allowed' : 'pointer',
+              opacity: !email.trim() ? 0.6 : 1,
             }}
           >
+            Notify Me
+          </button>
+
+          {submitted && (
             <p
+              className="mt-3 text-center"
               style={{
                 fontFamily: 'Inter, sans-serif',
                 fontSize: '14px',
-                color: '#C1392B',
-                lineHeight: '1.6',
+                color: '#1B4D3E',
+                fontWeight: 500,
               }}
             >
-              {error}
+              You're on the list.
             </p>
-          </div>
-        )}
+          )}
+        </form>
 
-        {/* Result */}
-        <SparkResult result={result} isLoading={isLoading} />
-
-        {/* Premium gate */}
-        {isAtLimit && <PremiumGate />}
-
-        {/* Explanation text (when idle and not at limit) */}
-        {!isAtLimit && !result && !isLoading && (
-          <div className="mt-8">
-            <p
-              style={{
-                fontFamily: '"Playfair Display", serif',
-                fontStyle: 'italic',
-                fontSize: '16px',
-                lineHeight: '1.75',
-                color: '#1A1A1A',
-                opacity: 0.45,
-                textAlign: 'center',
-              }}
-            >
-              "A place name, a museum caption, a line you overheard — Remnara builds you a cultural curriculum from the spark of a single idea."
-            </p>
-          </div>
-        )}
       </div>
     </div>
   )
