@@ -113,6 +113,11 @@ export default function Navigation() {
             <>
               <div className="relative">
                 <SparkIcon active={isActive} />
+                {/* Gold dot badge — coming soon indicator */}
+                <div
+                  className="absolute -top-1 -right-1 w-2 h-2 rounded-full"
+                  style={{ backgroundColor: '#C9A84C' }}
+                />
                 {isActive && (
                   <div
                     className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-0.5 rounded-full"

@@ -37,7 +37,8 @@ const featureCards = [
     path: '/spark',
     accentColor: '#C1392B',
     headline: 'Your Curriculum',
-    body: 'Paste anything. Get a personalised cultural deep-dive in seconds.',
+    body: 'Coming soon — paste anything that inspired you and get a cultural curriculum built around it.',
+    comingSoon: true,
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" fill="#C1392B" stroke="#C1392B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -146,18 +147,37 @@ export default function Home() {
                 <div className="flex-shrink-0 mt-0.5">{card.icon}</div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
-                    <span
-                      className="uppercase"
-                      style={{
-                        fontFamily: 'Inter, sans-serif',
-                        fontSize: '11px',
-                        fontWeight: 500,
-                        letterSpacing: '0.08em',
-                        color: card.accentColor,
-                      }}
-                    >
-                      {card.label}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="uppercase"
+                        style={{
+                          fontFamily: 'Inter, sans-serif',
+                          fontSize: '11px',
+                          fontWeight: 500,
+                          letterSpacing: '0.08em',
+                          color: card.accentColor,
+                        }}
+                      >
+                        {card.label}
+                      </span>
+                      {card.comingSoon && (
+                        <span
+                          className="uppercase"
+                          style={{
+                            fontFamily: 'Inter, sans-serif',
+                            fontSize: '11px',
+                            fontWeight: 500,
+                            letterSpacing: '0.08em',
+                            backgroundColor: '#C9A84C',
+                            color: 'white',
+                            padding: '2px 7px',
+                            borderRadius: '999px',
+                          }}
+                        >
+                          Coming Soon
+                        </span>
+                      )}
+                    </div>
                     <svg
                       width="16"
                       height="16"
